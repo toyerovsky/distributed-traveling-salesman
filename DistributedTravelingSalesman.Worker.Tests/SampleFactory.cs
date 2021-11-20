@@ -9,11 +9,11 @@ namespace DistributedTravelingSalesman.Worker.Tests
         private static int _charSequence = 'A';
         private static Random _random = new Random();
         
-        public static City GetCity()
+        public static City CreateCity()
         {
             return new City
             {
-                Name = $"City {_charSequence++}",
+                Name = $"City {(char)_charSequence++}",
                 Location = new Vector2(_random.NextSingle(), _random.NextSingle())
             };
         }
