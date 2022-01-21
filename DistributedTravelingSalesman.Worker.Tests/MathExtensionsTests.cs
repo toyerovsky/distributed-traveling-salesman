@@ -1,4 +1,4 @@
-﻿using DistributedTravelingSalesman.Worker.Domain;
+﻿using DistributedTravelingSalesman.Domain.Entities;
 using Xunit;
 
 namespace DistributedTravelingSalesman.Worker.Tests

@@ -1,6 +1,5 @@
 using System;
 using System.Numerics;
-using DistributedTravelingSalesman.Worker.Domain;
 using Xunit;
 
 namespace DistributedTravelingSalesman.Worker.Tests
@@ -17,7 +16,7 @@ namespace DistributedTravelingSalesman.Worker.Tests
 
             Assert.Equal(0f, city1.GetDistanceTo(city2));
         }
-        
+
         [Fact]
         public void GetDistanceTo_ShouldReturnSqrtOfTwo_WhenCity1Is_0_0_And_City2Is_1_1()
         {

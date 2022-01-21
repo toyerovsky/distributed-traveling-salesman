@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
@@ -6,11 +6,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DistributedTravelingSalesman.Domain\DistributedTravelingSalesman.Domain.csproj" />
-      <ProjectReference Include="..\DistributedTravelingSalesman.Dto\DistributedTravelingSalesman.Dto.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="RestSharp" Version="107.1.1" />
     </ItemGroup>
 
 </Project>

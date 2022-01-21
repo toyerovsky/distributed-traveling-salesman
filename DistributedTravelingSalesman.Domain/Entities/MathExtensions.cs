@@ -1,4 +1,4 @@
-﻿namespace DistributedTravelingSalesman.Worker.Domain
+﻿namespace DistributedTravelingSalesman.Domain.Entities
 {
     public static class MathExtensions
     {
@@ -6,8 +6,7 @@
         {
             if (f == 0)
                 return 1;
-            else
-                return f * Factorial(f - 1);
+            return f * Factorial(f - 1);
         }
     }
 }
