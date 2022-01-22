@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 
 namespace DistributedTravelingSalesman.Worker
 {
@@ -22,11 +21,6 @@ namespace DistributedTravelingSalesman.Worker
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1",
-                    new OpenApiInfo { Title = "DistributedTravelingSalesman.Worker", Version = "v1" });
-            });
             services.AddSingleton<ITaskService, TaskService>();
             services.AddHostedService<RegisterService>();
         }
@@ -34,13 +28,7 @@ namespace DistributedTravelingSalesman.Worker
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "DistributedTravelingSalesman.Worker v1"));
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseRouting();
 

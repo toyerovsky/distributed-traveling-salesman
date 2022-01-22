@@ -31,9 +31,9 @@ namespace DistributedTravelingSalesman.Controllers
         }
 
         [HttpDelete]
-        public async Task<IActionResult> RemoveWorker(RemoveWorkerDto request)
+        public async Task<IActionResult> RemoveWorker([FromQuery] string url)
         {
-            await _workerService.RemoveWorker(request);
+            await _workerService.RemoveWorker(new RemoveWorkerDto { Url = url });
 
             return NoContent();
         }

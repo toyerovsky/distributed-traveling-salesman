@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting.Server.Features;
@@ -29,21 +31,40 @@ namespace DistributedTravelingSalesman.Worker
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _hostApplicationLifetime.ApplicationStarted.Register(OnStarted);
-            _hostApplicationLifetime.ApplicationStopped.Register(OnStopped);
 
             return Task.CompletedTask;
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            _logger.LogInformation("Deregistering worker");
+            var client = new RestClient(_configuration["RegisterUrl"]);
+            var request = new RestRequest();
+            request.AddOrUpdateParameter("url", await GetUrl());
+            var response = await client.DeleteAsync(request);
+            if (!response.IsSuccessful)
+                _logger?.LogError($"Could not deregister worker: {response.StatusCode} {response.StatusDescription}");
+            else
+                _logger?.LogInformation("Successfully deregistered!");
+        }
+
+        private async Task<string> GetUrl()
+        {
+            var host = await Dns.GetHostEntryAsync(Dns.GetHostName());
+
+            var ip = host
+                .AddressList
+                .FirstOrDefault(ip =>
+                    ip.AddressFamily == AddressFamily.InterNetwork && ip.ToString().StartsWith("192"));
+
+            return FixWildcard($"http://{ip}:{GetPort(Addresses.Addresses.First())}");
         }
 
         private async void OnStarted()
         {
             var hostInfo = new Domain.Entities.Worker
             {
-                Url = FixWildcard(Addresses.Addresses.First())
+                Url = await GetUrl()
             };
             var client = new RestClient(_configuration["RegisterUrl"]);
             var request = new RestRequest();
@@ -55,21 +76,16 @@ namespace DistributedTravelingSalesman.Worker
                 _logger?.LogInformation("Successfully registered!");
         }
 
-        private async void OnStopped()
-        {
-            var client = new RestClient(_configuration["RegisterUrl"]);
-            var request = new RestRequest();
-            request.AddOrUpdateParameter("uri", FixWildcard(Addresses.Addresses.First()));
-            var response = await client.PostAsync(request);
-            if (!response.IsSuccessful)
-                _logger?.LogError($"Could not deregister worker: {response.StatusCode} {response.StatusDescription}");
-            else
-                _logger?.LogInformation("Successfully deregistered!");
-        }
-
         private string FixWildcard(string address)
         {
             return address.Replace("[::]", "localhost");
+        }
+
+        private string GetPort(string address)
+        {
+            var parts = address.Replace("[::]", "").Split(':');
+
+            return parts[2];
         }
     }
 }

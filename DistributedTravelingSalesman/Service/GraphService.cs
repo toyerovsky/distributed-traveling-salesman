@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -27,7 +26,6 @@ namespace DistributedTravelingSalesman.Service
             GetBestHamiltonianPathRequestDto request)
         {
             var graph = request.Graph;
-            var stopWatch = Stopwatch.StartNew();
 
             var helpersTasks = workers
                 .Select(e => WorkerConnectionHelper.Create(e, graph))
@@ -40,7 +38,7 @@ namespace DistributedTravelingSalesman.Service
             var startNode = request.StartIndex;
             var nodesCount = graph.AdjMatrix.GetLength(0);
 
-            var chunkSize = (int)Math.Ceiling((double)(nodesCount - 1) / helpers.Length);
+            var chunkSize = (int)Math.Floor((double)(nodesCount - 1) / helpers.Length);
 
             var chunks = new List<int>();
             var helperCounter = 0;

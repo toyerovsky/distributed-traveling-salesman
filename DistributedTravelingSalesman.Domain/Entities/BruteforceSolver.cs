@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -17,7 +16,6 @@ namespace DistributedTravelingSalesman.Domain.Entities
             _currentMinimumRoute = double.MaxValue;
             _currentStep.Clear();
         }
-
 
         public SolverResult Solve(Graph graph, int startIndex, int firstStep)
         {
@@ -51,25 +49,28 @@ namespace DistributedTravelingSalesman.Domain.Entities
             };
         }
 
-        private static bool NextPermutation<T>(IList<T> a) where T : IComparable
+        private static bool NextPermutation(List<int> list)
         {
-            if (a.Count < 2) return false;
-            var k = a.Count - 2;
+            if (list.Count < 2) return false;
+            var k = list.Count - 2;
 
-            while (k >= 0 && a[k].CompareTo(a[k + 1]) >= 0) k--;
+            while (k >= 0 && list[k].CompareTo(list[k + 1]) >= 0) k--;
             if (k < 0) return false;
 
-            var l = a.Count - 1;
-            while (l > k && a[l].CompareTo(a[k]) <= 0) l--;
+            var l = list.Count - 1;
+            while (l > k && list[l].CompareTo(list[k]) <= 0) l--;
 
-
-            Swapper.Swap(a, k, l);
+            list[k] ^= list[l];
+            list[l] ^= list[k];
+            list[k] ^= list[l];
 
             var i = k + 1;
-            var j = a.Count - 1;
+            var j = list.Count - 1;
             while (i < j)
             {
-                Swapper.Swap(a, i, j);
+                list[i] ^= list[j];
+                list[j] ^= list[i];
+                list[i] ^= list[j];
                 i++;
                 j--;
             }

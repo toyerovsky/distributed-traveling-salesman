@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -19,7 +20,11 @@ namespace DistributedTravelingSalesman.Worker
                     x.ClearProviders();
                     x.AddConsole();
                 })
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                    webBuilder.ConfigureKestrel(x => x.Limits.KeepAliveTimeout = TimeSpan.FromDays(1));
+                });
         }
     }
 }
